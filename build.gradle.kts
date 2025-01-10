@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
     id("java-library")
@@ -35,6 +37,36 @@ allprojects {
         testImplementation("org.slf4j:slf4j-jdk14:2.0.16")
         testImplementation("org.assertj:assertj-core:3.27.1")
         testImplementation("org.mongodb:bson:5.2.1")
+    }
+
+    tasks.named<ShadowJar>("shadowJar") {
+        archiveClassifier.set("")
+    }
+
+    tasks.register<Jar>("sourcesJar") {
+        archiveClassifier.set("sources")
+        from(sourceSets.main.get().allJava)
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "Reposilite"
+                url = uri("https://repo.derioo.de/releases")
+                credentials {
+                    username = System.getenv("REPOSILITE_USER")
+                    password = System.getenv("REPOSILITE_TOKEN")
+                }
+            }
+        }
+        publications {
+            register<MavenPublication>("gpr") {
+                groupId = "$group"
+                version = "$version"
+                artifact(tasks.named<ShadowJar>("shadowJar").get())
+                artifact(tasks.named<Jar>("sourcesJar").get())
+            }
+        }
     }
 
     tasks {
