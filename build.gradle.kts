@@ -69,6 +69,13 @@ allprojects {
         }
     }
 
+    tasks.named("publishGprPublicationToMavenLocal") {
+        dependsOn(tasks.named("jar"))
+        mustRunAfter(tasks.named("jar"))
+        dependsOn(tasks.named("shadowJar"))
+        mustRunAfter(tasks.named("shadowJar"))
+    }
+
     tasks {
         shadowJar {
             archiveClassifier.set("")
