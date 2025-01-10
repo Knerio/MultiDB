@@ -16,8 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GeneralTest {
 
     public static TestRepo repo() {
-//        DatabaseManager manager = new MongoManager(new MongoCredentials("mongodb://localhost:27017/testdb", "testdb"));
-        DatabaseManager manager = new MongoManager(new MongoCredentials().readFromFile());
+        DatabaseManager manager = new MongoManager(new MongoCredentials("mongodb://localhost:27017/testdb", "testdb"));
+//        DatabaseManager manager = new MongoManager(new MongoCredentials().readFromFile());
         return manager.create(TestRepo.class);
     }
 
