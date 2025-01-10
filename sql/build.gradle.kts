@@ -9,3 +9,9 @@ dependencies {
     testImplementation("org.xerial:sqlite-jdbc:3.47.1.0")
 
 }
+
+tasks {
+    compileJava {
+        dependsOn(project(":api").tasks.shadowJar)
+    }
+}

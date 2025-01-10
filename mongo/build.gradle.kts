@@ -4,3 +4,9 @@ dependencies {
     api("org.mongodb:mongodb-driver-sync:5.2.1")
     testImplementation("org.mongodb:mongodb-driver-sync:5.2.1")
 }
+
+tasks {
+    compileJava {
+        dependsOn(project(":api").tasks.shadowJar)
+    }
+}
