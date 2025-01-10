@@ -11,6 +11,9 @@ dependencies {
 }
 
 tasks {
+    jar {
+        dependsOn(project(":api").tasks.shadowJar)
+    }
     compileJava {
         dependsOn(project(":api").tasks.shadowJar)
     }
