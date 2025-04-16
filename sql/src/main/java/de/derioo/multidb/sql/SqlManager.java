@@ -26,6 +26,14 @@ public class SqlManager extends DatabaseManager {
         Configuration configuration = new Configuration();
 
         switch (credentials.getValues().getOrDefault(SqlCredentials.TYPE, "sqlite").toLowerCase()) {
+            case "postgresql", "postgres" -> {
+                configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+                configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+                configuration.setProperty("hibernate.connection.url", credentials.getValues().get(SqlCredentials.URL));
+                configuration.setProperty("hibernate.connection.username", credentials.getValues().get(SqlCredentials.USERNAME));
+                configuration.setProperty("hibernate.connection.password", credentials.getValues().get(SqlCredentials.PASSWORD));
+
+            }
             case "mysql" -> {
                 configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
                 configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
