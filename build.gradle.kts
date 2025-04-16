@@ -23,7 +23,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("org.mongodb:bson:5.2.1")
+        implementation("org.mongodb:bson:5.3.0")
 
         implementation("org.projectlombok:lombok:1.18.36")
         annotationProcessor("org.projectlombok:lombok:1.18.36")
@@ -36,7 +36,7 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
         testImplementation("org.slf4j:slf4j-jdk14:2.0.16")
         testImplementation("org.assertj:assertj-core:3.27.2")
-        testImplementation("org.mongodb:bson:5.2.1")
+        testImplementation("org.mongodb:bson:5.3.0")
     }
 
     tasks.named<ShadowJar>("shadowJar") {

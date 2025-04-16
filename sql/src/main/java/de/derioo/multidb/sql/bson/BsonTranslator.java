@@ -1,14 +1,10 @@
 package de.derioo.multidb.sql.bson;
 
-import de.derioo.multidb.method.IndexedMethod;
 import de.derioo.multidb.sql.utils.FieldUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
-import org.bson.BsonArray;
-import org.bson.BsonDocument;
-import org.bson.BsonTimestamp;
-import org.bson.BsonValue;
+import org.bson.*;
 import org.bson.conversions.Bson;
 import org.hibernate.Session;
 import org.hibernate.query.MutationQuery;
@@ -18,16 +14,15 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @UtilityClass
 public class BsonTranslator {
 
 
     public void delete(Session session, String tableName, Bson filter, Class<?> entityClass) {
-        StringBuilder query = new StringBuilder("DELETE FROM " + tableName + " e ");
+        StringBuilder query = new StringBuilder("DELETE FROM " + tableName + " ");
         Map<String, Object> parameterMap = createQueryByFilter(filter, query, entityClass);
-        MutationQuery createdQuery = session.createMutationQuery(query.toString());
+        MutationQuery createdQuery = session.createNativeMutationQuery(query.toString());
         for (Map.Entry<String, Object> entry : parameterMap.entrySet()) {
             createdQuery.setParameter(entry.getKey(), entry.getValue());
         }
@@ -35,9 +30,9 @@ public class BsonTranslator {
     }
 
     public long count(Session session, String tableName, Bson filter, Class<?> entityClass) {
-        StringBuilder query = new StringBuilder("SELECT COUNT(e) FROM " + tableName + " e ");
+        StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM " + tableName + " ");
         Map<String, Object> parameterMap = createQueryByFilter(filter, query, entityClass);
-        Query<Long> createdQuery = session.createQuery(query.toString(), Long.class);
+        Query<Long> createdQuery = session.createNativeQuery(query.toString(), Long.class);
         for (Map.Entry<String, Object> entry : parameterMap.entrySet()) {
             createdQuery.setParameter(entry.getKey(), entry.getValue());
         }
@@ -57,26 +52,28 @@ public class BsonTranslator {
             for (BsonValue condition : filter.toBsonDocument().getArray(filter.toBsonDocument().getFirstKey())) {
                 BsonDocument conditionDocument = condition.asDocument();
                 String field = conditionDocument.getFirstKey();
-                BsonDocument comparatorField = conditionDocument.getDocument(field);
+                BsonValue comparatorField = conditionDocument.get(field);
                 boolean not = false;
-                if (comparatorField.getFirstKey().equals("$not")) {
+                if (comparatorField.isDocument() && comparatorField.asDocument().getFirstKey().equals("$not")) {
                     not = true;
-                    comparatorField = comparatorField.getDocument("$not");
+                    comparatorField = comparatorField.asDocument().get("$not");
                 }
-                BsonComparator comparator = BsonComparator.getByBson(comparatorField.getFirstKey());
+                if (comparatorField.isRegularExpression()) throw new IllegalStateException("Cannot use regex in sql");
+                BsonComparator comparator = BsonComparator.getByBson(comparatorField.asDocument().getFirstKey());
                 if (field.equals("_id")) {
                     field = FieldUtils.getIdField(entityClass).getName();
                 }
                 query.append(chainType).append(not ? " NOT " : " ").append("(")
                         .append(field).append(comparator.sqlKey).append(":").append(field).append(")");
-                parameters.put(field, translateToSqlValue(comparatorField.get(comparatorField.getFirstKey())));
+                Object value = translateToSqlValue(comparatorField.asDocument().get(comparatorField.asDocument().getFirstKey()));
+                parameters.put(field, value);
             }
         }
         return parameters;
     }
 
     public <E> List<E> find(Session session, String tableName, Bson filter, Bson sort, int limit, int skip, Class<E> entityClass) {
-        StringBuilder query = new StringBuilder("FROM " + tableName + " e ");
+        StringBuilder query = new StringBuilder("SELECT * FROM " + tableName + " ");
         Map<String, Object> parameterMap = createQueryByFilter(filter, query, entityClass);
 
         if (!sort.toBsonDocument().isEmpty()) query.append("ORDER BY ");
@@ -87,12 +84,12 @@ public class BsonTranslator {
             if (key.equals("_id")) {
                 key = FieldUtils.getIdField(entityClass).getName();
             }
-            query.append(key).append(" ").append(entry.getValue().asNumber().intValue() == 1 ? "ASC":"DESC");
+            query.append(key).append(" ").append(entry.getValue().asNumber().intValue() == 1 ? "ASC" : "DESC");
             if (i != entries.size() - 1) query.append(",");
             query.append(" ");
         }
 
-        Query<E> createdQuery = session.createQuery(query.toString(), entityClass);
+        Query<E> createdQuery = session.createNativeQuery(query.toString(), entityClass);
         for (Map.Entry<String, Object> entry : parameterMap.entrySet()) {
             createdQuery.setParameter(entry.getKey(), entry.getValue());
         }
@@ -107,6 +104,10 @@ public class BsonTranslator {
     public enum BsonComparator {
 
         EQ("$eq", "="),
+        GREATER_THAN("$gt", ">"),
+        LESS_THAN("$lt", "<"),
+        GREATER_EQ("$gte", ">="),
+        LESS_EQ("$lte", "<="),
 
         ;
 
@@ -172,11 +173,11 @@ public class BsonTranslator {
         }
 
         if (bsonValue.isRegularExpression()) {
-            return bsonValue.asRegularExpression().getPattern();
+            return "'" + bsonValue.asRegularExpression().getPattern() + "'";
         }
 
         if (bsonValue.isSymbol()) {
-            return "'" + bsonValue.asSymbol().getSymbol();
+            return bsonValue.asSymbol().getSymbol();
         }
 
         if (bsonValue.isTimestamp()) {

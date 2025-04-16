@@ -9,10 +9,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class SqlManager extends DatabaseManager {
 
     private final Credentials credentials;
@@ -32,7 +28,6 @@ public class SqlManager extends DatabaseManager {
                 configuration.setProperty("hibernate.connection.url", credentials.getValues().get(SqlCredentials.URL));
                 configuration.setProperty("hibernate.connection.username", credentials.getValues().get(SqlCredentials.USERNAME));
                 configuration.setProperty("hibernate.connection.password", credentials.getValues().get(SqlCredentials.PASSWORD));
-
             }
             case "mysql" -> {
                 configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
