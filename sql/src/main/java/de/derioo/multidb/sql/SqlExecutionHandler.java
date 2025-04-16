@@ -58,11 +58,7 @@ public class SqlExecutionHandler<E, ID> extends AbstractExecutionHandler {
             }
             if (method.isSave()) {
                 for (Object entity : ((Object[]) methodArgs[0])) {
-                    if (session.contains(entity)) {
-                        session.merge(entity);
-                    } else {
-                        session.persist(entity);
-                    }
+                    session.merge(entity);
                 }
                 transaction.commit();
                 return true;
