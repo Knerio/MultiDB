@@ -9,13 +9,22 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SqlManager extends DatabaseManager {
 
     private final Credentials credentials;
+    private final List<Class<?>> classes;
 
     public SqlManager(Credentials credentials) {
+        this(credentials, new ArrayList<>());
+    }
+
+    public SqlManager(Credentials credentials, List<Class<?>> classes) {
         super(credentials);
         this.credentials = credentials;
+        this.classes = classes;
     }
 
     public SessionFactory factory(Class<?> entityClass) {
@@ -49,6 +58,9 @@ public class SqlManager extends DatabaseManager {
         configuration.setProperty("spring.jpa.hibernate.ddl-auto", "auto");
 
         configuration.addAnnotatedClass(entityClass);
+        for (Class<?> aClass : this.classes) {
+            configuration.addAnnotatedClass(aClass);
+        }
 
         StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties());
