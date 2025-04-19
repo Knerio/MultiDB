@@ -2,8 +2,8 @@ dependencies {
     api(project(":api"))
 
     implementation("org.hibernate:hibernate-core:6.6.5.Final")
-    implementation("org.hibernate.orm:hibernate-community-dialects:6.6.4.Final")
-    testImplementation("org.hibernate.orm:hibernate-community-dialects:6.6.4.Final")
+    implementation("org.hibernate.orm:hibernate-community-dialects:6.6.13.Final")
+    testImplementation("org.hibernate.orm:hibernate-community-dialects:6.6.13.Final")
 
     implementation("org.postgresql:postgresql:42.7.1")
 
