@@ -35,7 +35,7 @@ allprojects {
 
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
         testImplementation("org.slf4j:slf4j-jdk14:2.0.16")
-        testImplementation("org.assertj:assertj-core:3.27.2")
+        testImplementation("org.assertj:assertj-core:3.27.3")
         testImplementation("org.mongodb:bson:5.4.0")
     }
 
