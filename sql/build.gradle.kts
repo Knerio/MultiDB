@@ -5,7 +5,7 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-community-dialects:6.6.13.Final")
     testImplementation("org.hibernate.orm:hibernate-community-dialects:6.6.13.Final")
 
-    implementation("org.postgresql:postgresql:42.7.1")
+    implementation("org.postgresql:postgresql:42.7.5")
 
 
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
