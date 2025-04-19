@@ -8,8 +8,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.1")
 
 
-    implementation("org.xerial:sqlite-jdbc:3.47.2.0")
-    testImplementation("org.xerial:sqlite-jdbc:3.47.2.0")
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
+    testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
 
 }
 
