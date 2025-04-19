@@ -39,7 +39,7 @@ public class SqlExecutionHandler<E, ID> extends AbstractExecutionHandler {
         final Bson sort = args.toBsonDocument().getDocument("sort");
         int limit = args.get("limit", Integer.class) != null ? args.get("limit", Integer.class) : Integer.MAX_VALUE;
         int offset = args.get("skip", Integer.class) != null ? args.get("skip", Integer.class) : 0;
-        try (Session session = factory.openSession()) {
+        try (Session session = factory.openSession()    ) {
             Transaction transaction = session.beginTransaction();
             if (method.isDelete()) {
                 BsonTranslator.delete(session, tableName, filter, data.getEntityClass());

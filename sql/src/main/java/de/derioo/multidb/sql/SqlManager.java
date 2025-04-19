@@ -39,8 +39,6 @@ public class SqlManager extends DatabaseManager {
                 configuration.setProperty("hibernate.connection.password", credentials.getValues().get(SqlCredentials.PASSWORD));
             }
             case "mysql" -> {
-                configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-                configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
                 configuration.setProperty("hibernate.connection.url", credentials.getValues().get(SqlCredentials.URL));
                 configuration.setProperty("hibernate.connection.username", credentials.getValues().get(SqlCredentials.USERNAME));
                 configuration.setProperty("hibernate.connection.password", credentials.getValues().get(SqlCredentials.PASSWORD));
@@ -54,6 +52,7 @@ public class SqlManager extends DatabaseManager {
             }
         }
 
+        configuration.setProperty("hibernate.transaction.jta.platform", "org.hibernate.engine.transaction.jta.platform.internal.AtomikosJtaPlatform");
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("spring.jpa.hibernate.ddl-auto", "auto");
 
