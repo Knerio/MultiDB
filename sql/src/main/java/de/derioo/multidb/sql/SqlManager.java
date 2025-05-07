@@ -15,19 +15,21 @@ import java.util.List;
 public class SqlManager extends DatabaseManager {
 
     private final Credentials credentials;
-    private final List<Class<?>> classes;
+    private final List<Class<?>> entities;
 
-    public SqlManager(Credentials credentials) {
-        this(credentials, new ArrayList<>());
-    }
+    private SessionFactory sessionFactory;
 
-    public SqlManager(Credentials credentials, List<Class<?>> classes) {
+    public SqlManager(Credentials credentials, List<Class<?>> entities) {
         super(credentials);
         this.credentials = credentials;
-        this.classes = classes;
+        this.entities = entities;
     }
 
-    public SessionFactory factory(Class<?> entityClass) {
+    public SessionFactory sessionFactory() {
+        if (sessionFactory != null) {
+            return sessionFactory;
+        }
+
         Configuration configuration = new Configuration();
 
         switch (credentials.getValues().getOrDefault(SqlCredentials.TYPE, "sqlite").toLowerCase()) {
@@ -57,8 +59,16 @@ public class SqlManager extends DatabaseManager {
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("spring.jpa.hibernate.ddl-auto", "auto");
 
-        configuration.addAnnotatedClass(entityClass);
-        for (Class<?> aClass : this.classes) {
+        configuration.setProperty("hibernate.hikari.maximumPoolSize", "10");
+        configuration.setProperty("hibernate.hikari.minimumIdle", "2");
+        configuration.setProperty("hibernate.hikari.idleTimeout", "600000");
+        configuration.setProperty("hibernate.hikari.maxLifetime", "1800000");
+        configuration.setProperty("hibernate.hikari.connectionTimeout", "30000");
+
+        configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
+
+
+        for (Class<?> aClass : this.entities) {
             configuration.addAnnotatedClass(aClass);
         }
 
@@ -66,7 +76,8 @@ public class SqlManager extends DatabaseManager {
                 .applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = registryBuilder.build();
 
-        return configuration.buildSessionFactory(serviceRegistry);
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        return sessionFactory;
     }
 
     @Override

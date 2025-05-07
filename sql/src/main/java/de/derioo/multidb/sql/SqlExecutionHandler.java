@@ -9,15 +9,10 @@ import org.bson.conversions.Bson;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.MutationQuery;
-import org.hibernate.query.criteria.*;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +25,7 @@ public class SqlExecutionHandler<E, ID> extends AbstractExecutionHandler {
     public SqlExecutionHandler(RepositoryData<E, ID> data, SqlManager manager) {
         this.data = data;
         this.manager = manager;
-        this.factory = manager.factory(data.getEntityClass());
+        this.factory = manager.sessionFactory();
     }
 
     public Object handleBasicExecution(IndexedMethod method, Document args, Object... methodArgs) {
@@ -39,7 +34,7 @@ public class SqlExecutionHandler<E, ID> extends AbstractExecutionHandler {
         final Bson sort = args.toBsonDocument().getDocument("sort");
         int limit = args.get("limit", Integer.class) != null ? args.get("limit", Integer.class) : Integer.MAX_VALUE;
         int offset = args.get("skip", Integer.class) != null ? args.get("skip", Integer.class) : 0;
-        try (Session session = factory.openSession()    ) {
+        try (Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
             if (method.isDelete()) {
                 BsonTranslator.delete(session, tableName, filter, data.getEntityClass());
