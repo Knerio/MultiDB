@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +17,7 @@ public class GeneralTest {
 
     public static TestRepo repo() {
 //        DatabaseManager manager = new SqlManager(new SqlCredentials("mongodb://localhost:27017/testdb", "testdb"));
-        DatabaseManager manager = new SqlManager(new SqlCredentials().readFromFile());
+        DatabaseManager manager = new SqlManager(new SqlCredentials().readFromFile(), List.of(TestEntity.class));
         return manager.create(TestRepo.class);
     }
 
