@@ -64,6 +64,8 @@ public class SqlManager extends DatabaseManager {
         configuration.setProperty("hibernate.hikari.idleTimeout", "600000");
         configuration.setProperty("hibernate.hikari.maxLifetime", "1800000");
         configuration.setProperty("hibernate.hikari.connectionTimeout", "30000");
+        configuration.setProperty("hibernate.c3p0.timeout", "5000");
+        configuration.setProperty("hibernate.c3p0.idle_test_period", "3000");
 
         configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
 
