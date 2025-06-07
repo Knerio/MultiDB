@@ -33,7 +33,7 @@ allprojects {
 
         implementation("org.jetbrains:annotations:26.0.2")
 
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.13.1")
         testImplementation("org.slf4j:slf4j-jdk14:2.0.17")
         testImplementation("org.assertj:assertj-core:3.27.3")
         testImplementation("org.mongodb:bson:5.5.0")
