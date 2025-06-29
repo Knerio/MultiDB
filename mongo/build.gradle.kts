@@ -1,8 +1,8 @@
 dependencies {
     api(project(":api"))
 
-    api("org.mongodb:mongodb-driver-sync:5.5.0")
-    testImplementation("org.mongodb:mongodb-driver-sync:5.5.0")
+    api("org.mongodb:mongodb-driver-sync:5.5.1")
+    testImplementation("org.mongodb:mongodb-driver-sync:5.5.1")
 }
 
 tasks {
