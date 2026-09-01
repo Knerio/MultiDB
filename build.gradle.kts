@@ -25,11 +25,11 @@ allprojects {
     dependencies {
         implementation("org.mongodb:bson:5.5.0")
 
-        implementation("org.projectlombok:lombok:1.18.38")
-        annotationProcessor("org.projectlombok:lombok:1.18.38")
-        compileOnly("org.projectlombok:lombok:1.18.38")
-        testImplementation("org.projectlombok:lombok:1.18.38")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+        implementation("org.projectlombok:lombok:1.18.48")
+        annotationProcessor("org.projectlombok:lombok:1.18.48")
+        compileOnly("org.projectlombok:lombok:1.18.48")
+        testImplementation("org.projectlombok:lombok:1.18.48")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.48")
 
         implementation("org.jetbrains:annotations:26.0.2")
 
